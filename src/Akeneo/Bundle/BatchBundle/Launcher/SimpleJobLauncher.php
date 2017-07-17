@@ -80,7 +80,7 @@ class SimpleJobLauncher implements JobLauncherInterface
         $cmd = sprintf(
             '%s %s/console akeneo:batch:job --env=%s %s %s %s %s >> %s/batch_execute.log 2>&1',
             $pathFinder->find(),
-            $this->rootDir,
+            sprintf('%s/../bin', $this->rootDir),
             $this->environment,
             $emailParameter,
             escapeshellarg($jobInstance->getCode()),
