@@ -200,7 +200,7 @@ class ProductController
         $queryParameters = array_merge([
             'limit' => $this->apiConfiguration['pagination']['limit_by_default']
         ], $request->query->all());
-        $pqbOptions = ['limit' => (int)$queryParameters['limit']];
+        $pqbOptions = ['limit' => (int) $queryParameters['limit']];
 
         $searchParameter = null;
         if (isset($queryParameters['search_after'])) {
