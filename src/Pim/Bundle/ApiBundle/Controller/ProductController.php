@@ -540,7 +540,12 @@ class ProductController
 
                 if (isset($filter['locales'])) {
                     $context['locales'] = $filter['locales'];
-                    $this->queryParametersChecker->checkLocalesParameters($context['locales']);
+                    $localeCodes = $context['locales'];
+                    if (!is_array($localeCodes)) {
+                        $localeCodes = [$context['locales']];
+                    }
+
+                    $this->queryParametersChecker->checkLocalesParameters($localeCodes);
                 }
 
                 $value = isset($filter['value']) ? $filter['value'] : null;
