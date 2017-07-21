@@ -65,7 +65,7 @@ class ProductModelValidator extends ConstraintValidator
      *
      * @param ProductModelInterface $productModel
      */
-    private function validateEmptyAxesValues(ProductModelInterface $productModel)
+    private function validateEmptyAxesValues(ProductModelInterface $productModel): void
     {
         $level = $productModel->getVariationLevel();
         $axesAttributes = $productModel
@@ -89,7 +89,7 @@ class ProductModelValidator extends ConstraintValidator
      * @param ProductModelInterface $productModel
      */
 
-    private function validateDuplicateAxesValues(ProductModelInterface $productModel)
+    private function validateDuplicateAxesValues(ProductModelInterface $productModel): void
     {
         $level = $productModel->getVariationLevel();
         $axesAttributes = $productModel
