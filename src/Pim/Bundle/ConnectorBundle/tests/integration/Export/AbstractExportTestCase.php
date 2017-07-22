@@ -1,6 +1,6 @@
 <?php
 
-namespace Pim\Bundle\ImportExportBundle\tests\integration\Export;
+namespace Pim\Bundle\ConnectorBundle\tests\integration\Export;
 
 use Akeneo\Test\Integration\Configuration;
 use Akeneo\Test\Integration\JobLauncher;
@@ -15,12 +15,6 @@ abstract class AbstractExportTestCase extends TestCase
     protected $jobLauncher;
 
     /**
-     * Load the fixtures.
-     */
-    protected function loadFixtures() {
-    }
-
-    /**
      * {@inheritdoc}
      */
     protected function setUp()
@@ -29,6 +23,13 @@ abstract class AbstractExportTestCase extends TestCase
 
         $this->jobLauncher = new JobLauncher(static::$kernel);
         $this->loadFixtures();
+    }
+
+    /**
+     * Load the fixtures.
+     */
+    protected function loadFixtures() : void
+    {
     }
 
     /**
@@ -74,7 +75,7 @@ abstract class AbstractExportTestCase extends TestCase
     }
 
     /**
-     * @param array  $data
+     * @param array $data
      *
      * @return AttributeInterface
      */
@@ -88,7 +89,7 @@ abstract class AbstractExportTestCase extends TestCase
     }
 
     /**
-     * @param array  $data
+     * @param array $data
      *
      * @return FamilyInterface
      */

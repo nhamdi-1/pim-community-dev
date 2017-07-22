@@ -85,10 +85,10 @@ class JobLauncher
     }
 
     /**
-     * Launch an export in a subprocess because it's not possible to launch two exports in the same subprocess.
-     * Some services are stateful.
+     * Launch an export in a subprocess because it's not possible to launch two exports in the same process.
+     * The cause is that some services are stateful, such as the JSONFileBuffer that is not flushed after an export.
      *
-     * TODO: fix those stateful services
+     * TODO: fix  stateful services
      *
      * @param string      $command
      * @param string      $jobCode
@@ -131,7 +131,7 @@ class JobLauncher
         }
 
         $content = file_get_contents($filePath);
-        //unlink($filePath);
+        unlink($filePath);
 
         return $content;
     }
