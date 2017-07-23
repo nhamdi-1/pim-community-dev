@@ -92,4 +92,4 @@ Feature: Define user rights
     And I save the role
     Then I should not see the text "There are unsaved changes."
     When I am on the products page
-    Then I should not see the text "2014 Collection"
+    Then I should see the text "2014 Collection"

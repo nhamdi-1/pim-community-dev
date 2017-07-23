@@ -16,7 +16,7 @@ Feature: Enforce ACL on history
     And I save the role
     Then I should not see the text "There are unsaved changes."
     When I am on the "X_SELL" association type page
-    Then I should not see "history"
+    Then I should see "history"
 
   Scenario: Successfully hide attribute group history when user doesn't have the rights
     Given a "footwear" catalog configuration
