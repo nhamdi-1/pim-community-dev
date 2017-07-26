@@ -10,13 +10,13 @@ use Doctrine\Common\Util\ClassUtils;
 use Pim\Component\Catalog\Model\ProductInterface;
 
 /**
- * Product indexer, define custom logic and options for product indexing in the search engine.
+ * Product model indexer, define custom logic and options for product model indexing in the search engine.
  *
  * @author    Julien Janvier <j.janvier@gmail.com>
  * @copyright 2017 Akeneo SAS (http://www.akeneo.com)
  * @license   http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
-class ProductIndexer extends AbstractIndexer implements IndexerInterface, BulkIndexerInterface, RemoverInterface, BulkRemoverInterface
+class ProductModelIndexer extends AbstractIndexer implements IndexerInterface, BulkIndexerInterface, RemoverInterface, BulkRemoverInterface
 {
     /**
      * {@inheritdoc}
@@ -26,7 +26,7 @@ class ProductIndexer extends AbstractIndexer implements IndexerInterface, BulkIn
         if (!$object instanceof ProductInterface) {
             throw new \InvalidArgumentException(
                 sprintf(
-                    'Only products "Pim\Component\Catalog\Model\ProductInterface" can be indexed in the search engine, "%s" provided.',
+                    'Only product models "Pim\Component\Catalog\Model\ProductModelInterface" can be indexed in the search engine, "%s" provided.',
                     ClassUtils::getClass($object)
                 )
             );
@@ -39,7 +39,7 @@ class ProductIndexer extends AbstractIndexer implements IndexerInterface, BulkIn
     protected function validateObjectNormalization(array $normalization)
     {
         if (!isset($normalization['id'])) {
-            throw new \InvalidArgumentException('Only products with an ID can be indexed in the search engine.');
+            throw new \InvalidArgumentException('Only product models with an ID can be indexed in the search engine.');
         }
     }
 }
