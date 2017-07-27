@@ -4,7 +4,7 @@ namespace spec\Pim\Bundle\CatalogBundle\Command;
 
 use PhpSpec\ObjectBehavior;
 use Pim\Bundle\CatalogBundle\Doctrine\ORM\Repository\ProductRepository;
-use Pim\Bundle\CatalogBundle\Elasticsearch\ProductIndexer;
+use Pim\Bundle\CatalogBundle\Elasticsearch\ObjectIndexer;
 use Prophecy\Argument;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Application;
@@ -30,7 +30,7 @@ class IndexProductCommandSpec extends ObjectBehavior
     function it_indexes_all_products(
         ContainerInterface $container,
         ProductRepository $productRepository,
-        ProductIndexer $productIndexer,
+        ObjectIndexer $productIndexer,
         InputInterface $input,
         OutputInterface $output,
         Application $application,

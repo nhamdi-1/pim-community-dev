@@ -7,7 +7,7 @@ use Akeneo\Component\StorageUtils\Indexer\IndexerInterface;
 use Akeneo\Component\StorageUtils\Remover\BulkRemoverInterface;
 use Akeneo\Component\StorageUtils\Remover\RemoverInterface;
 use Doctrine\Common\Util\ClassUtils;
-use Pim\Component\Catalog\Model\ProductInterface;
+use Pim\Component\Catalog\Model\ProductModelInterface;
 
 /**
  * Product model indexer, define custom logic and options for product model indexing in the search engine.
@@ -23,7 +23,7 @@ class ProductModelIndexer extends AbstractIndexer implements IndexerInterface, B
      */
     protected function validateObject($object)
     {
-        if (!$object instanceof ProductInterface) {
+        if (!$object instanceof ProductModelInterface) {
             throw new \InvalidArgumentException(
                 sprintf(
                     'Only product models "Pim\Component\Catalog\Model\ProductModelInterface" can be indexed in the search engine, "%s" provided.',

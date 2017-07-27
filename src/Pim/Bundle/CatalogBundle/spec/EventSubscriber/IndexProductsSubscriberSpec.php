@@ -5,7 +5,7 @@ namespace spec\Pim\Bundle\CatalogBundle\EventSubscriber;
 use Akeneo\Component\StorageUtils\Event\RemoveEvent;
 use Akeneo\Component\StorageUtils\StorageEvents;
 use PhpSpec\ObjectBehavior;
-use Pim\Bundle\CatalogBundle\Elasticsearch\ProductIndexer;
+use Pim\Bundle\CatalogBundle\Elasticsearch\ObjectIndexer;
 use Pim\Bundle\CatalogBundle\EventSubscriber\IndexProductsSubscriber;
 use Pim\Component\Catalog\Model\ProductInterface;
 use Prophecy\Argument;
@@ -13,7 +13,7 @@ use Symfony\Component\EventDispatcher\GenericEvent;
 
 class IndexProductsSubscriberSpec extends ObjectBehavior
 {
-    function let(ProductIndexer $indexer)
+    function let(ObjectIndexer $indexer)
     {
         $this->beConstructedWith($indexer);
     }
