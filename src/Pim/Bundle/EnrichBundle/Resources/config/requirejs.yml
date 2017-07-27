@@ -178,6 +178,11 @@ config:
                     options:
                         urls:
                             get: pim_enrich_product_rest_get
+                product_model:
+                    module: pim/product-fetcher
+                    options:
+                        urls:
+                            get: pim_enrich_product_model_rest_get
                 category:
                     module: pim/base-fetcher
                     options:
