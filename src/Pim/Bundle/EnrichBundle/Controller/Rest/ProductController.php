@@ -16,6 +16,7 @@ use Pim\Component\Catalog\Localization\Localizer\AttributeConverterInterface;
 use Pim\Component\Catalog\Model\AttributeInterface;
 use Pim\Component\Catalog\Model\ProductInterface;
 use Pim\Component\Catalog\Repository\AttributeRepositoryInterface;
+use Pim\Component\Catalog\Repository\ProductModelRepositoryInterface;
 use Pim\Component\Catalog\Repository\ProductRepositoryInterface;
 use Pim\Component\Enrich\Converter\ConverterInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -80,22 +81,26 @@ class ProductController
     /** @var NormalizerInterface */
     protected $constraintViolationNormalizer;
 
+    /** @var ProductModelRepositoryInterface */
+    protected $productModelRepository;
+
     /**
-     * @param ProductRepositoryInterface   $productRepository
-     * @param AttributeRepositoryInterface $attributeRepository
-     * @param ObjectUpdaterInterface       $productUpdater
-     * @param SaverInterface               $productSaver
-     * @param NormalizerInterface          $normalizer
-     * @param ValidatorInterface           $validator
-     * @param UserContext                  $userContext
-     * @param ObjectFilterInterface        $objectFilter
-     * @param CollectionFilterInterface    $productEditDataFilter
-     * @param RemoverInterface             $productRemover
-     * @param ProductBuilderInterface      $productBuilder
-     * @param AttributeConverterInterface  $localizedConverter
-     * @param ProductFilterInterface       $emptyValuesFilter
-     * @param ConverterInterface           $productValueConverter
-     * @param NormalizerInterface          $constraintViolationNormalizer
+     * @param ProductRepositoryInterface      $productRepository
+     * @param AttributeRepositoryInterface    $attributeRepository
+     * @param ObjectUpdaterInterface          $productUpdater
+     * @param SaverInterface                  $productSaver
+     * @param NormalizerInterface             $normalizer
+     * @param ValidatorInterface              $validator
+     * @param UserContext                     $userContext
+     * @param ObjectFilterInterface           $objectFilter
+     * @param CollectionFilterInterface       $productEditDataFilter
+     * @param RemoverInterface                $productRemover
+     * @param ProductBuilderInterface         $productBuilder
+     * @param AttributeConverterInterface     $localizedConverter
+     * @param ProductFilterInterface          $emptyValuesFilter
+     * @param ConverterInterface              $productValueConverter
+     * @param NormalizerInterface             $constraintViolationNormalizer
+     * @param ProductModelRepositoryInterface $productModelRepository
      */
     public function __construct(
         ProductRepositoryInterface $productRepository,
@@ -112,7 +117,8 @@ class ProductController
         AttributeConverterInterface $localizedConverter,
         ProductFilterInterface $emptyValuesFilter,
         ConverterInterface $productValueConverter,
-        NormalizerInterface $constraintViolationNormalizer
+        NormalizerInterface $constraintViolationNormalizer,
+        ProductModelRepositoryInterface $productModelRepository
     ) {
         $this->productRepository = $productRepository;
         $this->attributeRepository = $attributeRepository;
@@ -129,6 +135,7 @@ class ProductController
         $this->emptyValuesFilter = $emptyValuesFilter;
         $this->productValueConverter = $productValueConverter;
         $this->constraintViolationNormalizer = $constraintViolationNormalizer;
+        $this->productModelRepository = $productModelRepository;
     }
 
     /**
@@ -153,6 +160,14 @@ class ProductController
             'internal_api',
             $normalizationContext
         );
+
+        unset($normalizedProduct['associations']);
+        unset($normalizedProduct['variant_group']);
+        unset($normalizedProduct['meta']['associations']);
+        unset($normalizedProduct['meta']['completenesses']);
+        unset($normalizedProduct['groups']);
+        unset($normalizedProduct['enabled']);
+        $normalizedProduct['meta']['form'] = 'pim-product-model-edit-form';
 
         return new JsonResponse($normalizedProduct);
     }
