@@ -13,6 +13,7 @@ parameters:
     pim_catalog.event_subscriber.compute_product_template_raw_values.class: Pim\Bundle\CatalogBundle\EventSubscriber\ComputeProductTemplateRawValuesSubscriber
     pim_catalog.event_subscriber.load_product_template_values.class: Pim\Bundle\CatalogBundle\EventSubscriber\LoadProductTemplateValuesSubscriber
     pim_catalog.event_subscriber.index_products_and_product_models.class: Pim\Bundle\CatalogBundle\EventSubscriber\IndexProductsAndProductModelsSubscriber
+    pim_catalog.event_subscriber.plan_product_models_children.class: Pim\Bundle\CatalogBundle\EventSubscriber\PlanProductModelChildrenIndexingSubscriber
 
 services:
     # Subscribers
@@ -122,5 +123,12 @@ services:
             -
               - '@pim_catalog.elasticsearch.product_indexer'
               - '@pim_catalog.elasticsearch.product_and_model_indexer'
+        tags:
+            - { name: kernel.event_subscriber }
+
+    pim_catalog.event_subscriber.plan_product_models_children_indexing:
+        class: '%pim_catalog.event_subscriber.plan_product_models_children.class%'
+        arguments:
+            - '@event_dispatcher'
         tags:
             - { name: kernel.event_subscriber }
