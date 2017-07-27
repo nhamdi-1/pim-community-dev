@@ -148,7 +148,7 @@ class ProductController
     public function getAction($id)
     {
         $product = $this->findProductOr404($id);
-        $this->productBuilder->addMissingAssociations($product);
+//        $this->productBuilder->addMissingAssociations($product);
 
         $normalizationContext = $this->userContext->toArray() + [
             'filter_types'               => ['pim.internal_api.product_value.view'],
@@ -337,7 +337,7 @@ class ProductController
      */
     protected function findProductOr404($id)
     {
-        $product = $this->productRepository->find($id);
+        $product = $this->productModelRepository->find($id);
         $product = $this->objectFilter->filterObject($product, 'pim.internal_api.product.view') ? null : $product;
 
         if (!$product) {

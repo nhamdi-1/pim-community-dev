@@ -2,6 +2,7 @@
 
 namespace Pim\Bundle\EnrichBundle\Normalizer;
 
+use Pim\Bundle\EnrichBundle\Provider\Form\FormProviderInterface;
 use Pim\Component\Catalog\Localization\Localizer\AttributeConverterInterface;
 use Pim\Component\Catalog\Model\ProductModelInterface;
 use Pim\Component\Enrich\Converter\ConverterInterface;
@@ -27,19 +28,25 @@ class ProductModelNormalizer implements NormalizerInterface
     /** @var ConverterInterface */
     private $productValueConverter;
 
+    /** @var FormProviderInterface */
+    private $formProvider;
+
     /**
      * @param NormalizerInterface         $productModelNormalizer
      * @param AttributeConverterInterface $localizedConverter
      * @param ConverterInterface          $productValueConverter
+     * @param FormProviderInterface       $formProvider
      */
     public function __construct(
         NormalizerInterface $productModelNormalizer,
         AttributeConverterInterface $localizedConverter,
-        ConverterInterface $productValueConverter
+        ConverterInterface $productValueConverter,
+        FormProviderInterface $formProvider
     ) {
         $this->productModelNormalizer = $productModelNormalizer;
         $this->localizedConverter = $localizedConverter;
         $this->productValueConverter = $productValueConverter;
+        $this->formProvider = $formProvider;
     }
 
     /**
@@ -70,7 +77,8 @@ class ProductModelNormalizer implements NormalizerInterface
 //                'structure_version' => $this->structureVersionProvider->getStructureVersion(),
 //                'completenesses'    => $this->getNormalizedCompletenesses($product),
 //                'image'             => $this->normalizeImage($product->getImage(), $format, $context),
-            ] + $this->getLabels($productModel) + $this->getAssociationMeta($productModel);
+                'label' => ['en_US' => 'JAMBON']
+            ];
 
         return $normalizedProductModel;
     }
