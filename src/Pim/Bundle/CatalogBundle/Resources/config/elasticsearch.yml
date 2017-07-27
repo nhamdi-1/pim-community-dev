@@ -1,6 +1,5 @@
 parameters:
     pim_catalog.elasticsearch.product_indexer.class: 'Pim\Bundle\CatalogBundle\Elasticsearch\ProductIndexer'
-    pim_catalog.elasticsearch.product_model_indexer.class: 'Pim\Bundle\CatalogBundle\Elasticsearch\ProductModelIndexer'
 
 services:
     pim_catalog.elasticsearch.product_indexer:
@@ -9,20 +8,3 @@ services:
             - '@pim_serializer'
             - '@akeneo_elasticsearch.client'
             - 'pim_catalog_product'
-            - 'indexing_product'
-
-    pim_catalog.elasticsearch.indexing_product_and_model_indexer.product:
-        class: '%pim_catalog.elasticsearch.product_indexer.class%'
-        arguments:
-            - '@pim_serializer'
-            - '@akeneo_elasticsearch.client'
-            - 'pim_catalog_product'
-            - 'indexing_product_and_model'
-
-    pim_catalog.elasticsearch.indexing_product_and_model_indexer.product_model:
-        class: '%pim_catalog.elasticsearch.product_model_indexer.class%'
-        arguments:
-            - '@pim_serializer'
-            - '@akeneo_elasticsearch.client'
-            - 'pim_catalog_product'
-            - 'indexing_product_and_model'
