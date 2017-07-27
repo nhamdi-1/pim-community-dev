@@ -16,7 +16,7 @@ use Pim\Component\Catalog\Localization\Localizer\AttributeConverterInterface;
 use Pim\Component\Catalog\Model\AttributeInterface;
 use Pim\Component\Catalog\Model\ProductInterface;
 use Pim\Component\Catalog\Repository\AttributeRepositoryInterface;
-use Pim\Component\Catalog\Repository\ProductRepositoryInterface;
+use Pim\Component\Catalog\Repository\ProductModelRepositoryInterface;
 use Pim\Component\Enrich\Converter\ConverterInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -27,17 +27,12 @@ use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
- * Product controller
- *
- * @author    Julien Sanchez <julien@akeneo.com>
- * @copyright 2015 Akeneo SAS (http://www.akeneo.com)
- * @license   http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ * @author    Adrien Pétremann <adrien.petremann@akeneo.com>
+ * @copyright 2017 Akeneo SAS (http://www.akeneo.com)
+ * @license   http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
  */
-class ProductController
+class ProductModelController
 {
-    /** @var ProductRepositoryInterface */
-    protected $productRepository;
-
     /** @var AttributeRepositoryInterface */
     protected $attributeRepository;
 
@@ -80,25 +75,28 @@ class ProductController
     /** @var NormalizerInterface */
     protected $constraintViolationNormalizer;
 
+    /** @var ProductModelRepositoryInterface */
+    protected $productModelRepository;
+
     /**
-     * @param ProductRepositoryInterface   $productRepository
-     * @param AttributeRepositoryInterface $attributeRepository
-     * @param ObjectUpdaterInterface       $productUpdater
-     * @param SaverInterface               $productSaver
-     * @param NormalizerInterface          $normalizer
-     * @param ValidatorInterface           $validator
-     * @param UserContext                  $userContext
-     * @param ObjectFilterInterface        $objectFilter
-     * @param CollectionFilterInterface    $productEditDataFilter
-     * @param RemoverInterface             $productRemover
-     * @param ProductBuilderInterface      $productBuilder
-     * @param AttributeConverterInterface  $localizedConverter
-     * @param ProductFilterInterface       $emptyValuesFilter
-     * @param ConverterInterface           $productValueConverter
-     * @param NormalizerInterface          $constraintViolationNormalizer
+     * @param AttributeRepositoryInterface    $attributeRepository
+     * @param ObjectUpdaterInterface          $productUpdater
+     * @param SaverInterface                  $productSaver
+     * @param NormalizerInterface             $normalizer
+     * @param ValidatorInterface              $validator
+     * @param UserContext                     $userContext
+     * @param ObjectFilterInterface           $objectFilter
+     * @param CollectionFilterInterface       $productEditDataFilter
+     * @param RemoverInterface                $productRemover
+     * @param ProductBuilderInterface         $productBuilder
+     * @param AttributeConverterInterface     $localizedConverter
+     * @param ProductFilterInterface          $emptyValuesFilter
+     * @param ConverterInterface              $productValueConverter
+     * @param NormalizerInterface             $constraintViolationNormalizer
+     * @param ProductModelRepositoryInterface $productModelRepository
      */
     public function __construct(
-        ProductRepositoryInterface $productRepository,
+        ProductModelRepositoryInterface $productModelRepository,
         AttributeRepositoryInterface $attributeRepository,
         ObjectUpdaterInterface $productUpdater,
         SaverInterface $productSaver,
@@ -114,7 +112,7 @@ class ProductController
         ConverterInterface $productValueConverter,
         NormalizerInterface $constraintViolationNormalizer
     ) {
-        $this->productRepository = $productRepository;
+        $this->productModelRepository = $productModelRepository;
         $this->attributeRepository = $attributeRepository;
         $this->productUpdater = $productUpdater;
         $this->productSaver = $productSaver;
@@ -141,7 +139,6 @@ class ProductController
     public function getAction($id)
     {
         $product = $this->findProductOr404($id);
-        $this->productBuilder->addMissingAssociations($product);
 
         $normalizationContext = $this->userContext->toArray() + [
             'filter_types'               => ['pim.internal_api.product_value.view'],
@@ -322,7 +319,7 @@ class ProductController
      */
     protected function findProductOr404($id)
     {
-        $product = $this->productRepository->find($id);
+        $product = $this->productModelRepository->find($id);
         $product = $this->objectFilter->filterObject($product, 'pim.internal_api.product.view') ? null : $product;
 
         if (!$product) {

@@ -25,13 +25,13 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
 use Symfony\Component\Translation\TranslatorInterface;
 
 /**
- * Product Controller
+ * Product model controller
  *
- * @author    Nicolas Dupont <nicolas@akeneo.com>
- * @copyright 2013 Akeneo SAS (http://www.akeneo.com)
- * @license   http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ * @author    Adrien Pétremann <adrien.petremann@akeneo.com>
+ * @copyright 2017 Akeneo SAS (http://www.akeneo.com)
+ * @license   http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
  */
-class ProductController
+class ProductModelController
 {
     const BACK_TO_GRID = 'BackGrid';
 
@@ -137,6 +137,19 @@ class ProductController
             'locales'    => $this->getUserLocales(),
             'dataLocale' => $this->getDataLocale(),
         ];
+    }
+
+    /**
+     * Edit product
+     *
+     * @Template
+     * @AclAncestor("pim_enrich_product_index")
+     *
+     * @return array
+     */
+    public function editAction()
+    {
+        return [];
     }
 
     /**

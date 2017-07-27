@@ -263,7 +263,13 @@ config:
                     module: pim/controller/group-type
                     aclResourceId: pim_enrich_grouptype_edit
                 pim_enrich_product_edit:
-                    module: pim/controller/product
+                    module: pim/controller/can-have-family-variant
+                    config:
+                        entity: product
+                pim_enrich_product_model_edit:
+                    module: pim/controller/can-have-family-variant
+                    config:
+                        entity: product_model
                 pim_enrich_group_edit:
                     module: pim/controller/group
                     aclResourceId: pim_enrich_group_edit
@@ -517,7 +523,7 @@ config:
         pim/controller/base:                   pimenrich/js/controller/base
         pim/controller/template:               pimenrich/js/controller/template
         pim/controller/form:                   pimenrich/js/controller/form
-        pim/controller/product:                pimenrich/js/controller/product
+        pim/controller/can-have-family-variant: pimenrich/js/controller/can-have-family-variant
         pim/controller/family:                 pimenrich/js/controller/family
         pim/controller/channel/edit:           pimenrich/js/controller/channel/edit
         pim/controller/common/index:           pimenrich/js/controller/common/index
