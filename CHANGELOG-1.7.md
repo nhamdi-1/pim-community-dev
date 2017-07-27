@@ -2,7 +2,15 @@
 
 ## Bug Fixes
 
+- PIM-6525: fix issue with select attribute type which never open in PEF
+- PIM-6420: fix simple and multi select auto sorting
+
+# 1.7.6 (2017-06-30)
+
+## Bug Fixes
+
 - PIM-6420: Fix autosorting of attribute options
+- PIM-6470: Correctly translate default filters on user profile
 
 # 1.7.5 (2017-06-02)
 
