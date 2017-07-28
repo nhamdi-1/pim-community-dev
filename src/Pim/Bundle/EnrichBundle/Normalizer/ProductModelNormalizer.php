@@ -3,6 +3,7 @@
 namespace Pim\Bundle\EnrichBundle\Normalizer;
 
 use Pim\Bundle\EnrichBundle\Provider\Form\FormProviderInterface;
+use Pim\Bundle\VersioningBundle\Manager\VersionManager;
 use Pim\Component\Catalog\Localization\Localizer\AttributeConverterInterface;
 use Pim\Component\Catalog\Model\ProductModelInterface;
 use Pim\Component\Enrich\Converter\ConverterInterface;
@@ -22,6 +23,15 @@ class ProductModelNormalizer implements NormalizerInterface
     /** @var NormalizerInterface */
     private $productModelNormalizer;
 
+    /** @var NormalizerInterface */
+    private $familyVariantNormalizer;
+
+    /** @var NormalizerInterface */
+    private $versionNormalizer;
+
+    /** @var VersionManager */
+    private $versionManager;
+
     /** @var AttributeConverterInterface */
     private $localizedConverter;
 
@@ -33,17 +43,26 @@ class ProductModelNormalizer implements NormalizerInterface
 
     /**
      * @param NormalizerInterface         $productModelNormalizer
+     * @param NormalizerInterface         $familyVariantNormalizer
+     * @param NormalizerInterface         $versionNormalizer
+     * @param VersionManager              $versionManager
      * @param AttributeConverterInterface $localizedConverter
      * @param ConverterInterface          $productValueConverter
      * @param FormProviderInterface       $formProvider
      */
     public function __construct(
         NormalizerInterface $productModelNormalizer,
+        NormalizerInterface $familyVariantNormalizer,
+        NormalizerInterface $versionNormalizer,
+        VersionManager $versionManager,
         AttributeConverterInterface $localizedConverter,
         ConverterInterface $productValueConverter,
         FormProviderInterface $formProvider
     ) {
         $this->productModelNormalizer = $productModelNormalizer;
+        $this->familyVariantNormalizer = $familyVariantNormalizer;
+        $this->versionNormalizer = $versionNormalizer;
+        $this->versionManager = $versionManager;
         $this->localizedConverter = $localizedConverter;
         $this->productValueConverter = $productValueConverter;
         $this->formProvider = $formProvider;
@@ -54,25 +73,31 @@ class ProductModelNormalizer implements NormalizerInterface
      */
     public function normalize($productModel, $format = null, array $context = [])
     {
+        /** @var ProductModelInterface $productModel */
+
         $normalizedProductModel = $this->productModelNormalizer->normalize($productModel, 'standard', $context);
         $normalizedProductModel['values'] = $this->localizedConverter->convertToLocalizedFormats(
             $normalizedProductModel['values'],
             $context
         );
 
+        $normalizedProductModel['family'] = $productModel->getFamilyVariant()->getFamily()->getCode();
         $normalizedProductModel['values'] = $this->productValueConverter->convert($normalizedProductModel['values']);
 
-//        $oldestLog = $this->versionManager->getOldestLogEntry($product);
-//        $newestLog = $this->versionManager->getNewestLogEntry($product);
+        $oldestLog = $this->versionManager->getOldestLogEntry($productModel);
+        $newestLog = $this->versionManager->getNewestLogEntry($productModel);
 
-//        $created = null !== $oldestLog ? $this->versionNormalizer->normalize($oldestLog, 'internal_api') : null;
-//        $updated = null !== $newestLog ? $this->versionNormalizer->normalize($newestLog, 'internal_api') : null;
+        $created = null !== $oldestLog ? $this->versionNormalizer->normalize($oldestLog, 'internal_api') : null;
+        $updated = null !== $newestLog ? $this->versionNormalizer->normalize($newestLog, 'internal_api') : null;
+
+        $normalizedFamilyVariant = $this->familyVariantNormalizer->normalize($productModel->getFamilyVariant());
 
         $normalizedProductModel['meta'] = [
+                'family_variant'    => $normalizedFamilyVariant,
                 'form'              => $this->formProvider->getForm($productModel),
                 'id'                => $productModel->getId(),
-//                'created'           => $created,
-//                'updated'           => $updated,
+                'created'           => $created,
+                'updated'           => $updated,
                 'model_type'        => 'product',
 //                'structure_version' => $this->structureVersionProvider->getStructureVersion(),
 //                'completenesses'    => $this->getNormalizedCompletenesses($product),

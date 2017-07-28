@@ -70,6 +70,9 @@ services:
         class: '%pim_enrich.normalizer.product_model.class%'
         arguments:
             - '@pim_catalog.normalizer.standard.product_model'
+            - '@pim_catalog.normalizer.standard.family_variant'
+            - '@pim_enrich.normalizer.version'
+            - '@pim_versioning.manager.version'
             - '@pim_catalog.localization.localizer.converter'
             - '@pim_enrich.converter.standard_to_enrich.product_value'
             - '@pim_enrich.provider.form.product_model'

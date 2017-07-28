@@ -103,6 +103,12 @@ extensions:
         targetZone: meta
         position: 70
 
+    pim-product-model-edit-form-family-variant:
+        module: pim/product-edit-form/meta/family-variant
+        parent: pim-product-model-edit-form-meta
+        targetZone: meta
+        position: 80
+
     pim-product-model-edit-form-created:
         module: pim/product-edit-form/meta/created
         parent: pim-product-model-edit-form-meta

@@ -694,6 +694,7 @@ config:
         pim/product-edit-form/sequential-edit:             pimenrich/js/product/form/sequential-edit
         pim/product-edit-form/delete:                      pimenrich/js/product/form/delete
         pim/product-edit-form/meta/family:                 pimenrich/js/product/form/meta/family
+        pim/product-edit-form/meta/family-variant:         pimenrich/js/product/form/meta/family-variant
         pim/product-edit-form/meta/change-family:          pimenrich/js/product/form/meta/change-family
         pim/product-edit-form/meta/created:                pimenrich/js/product/form/meta/created
         pim/product-edit-form/meta/updated:                pimenrich/js/product/form/meta/updated
@@ -985,6 +986,7 @@ config:
         pim/template/product/download-pdf:                   pimenrich/templates/product/download-pdf.html
         pim/template/product/meta/status-switcher:           pimenrich/templates/product/meta/status-switcher.html
         pim/template/product/meta/family:                    pimenrich/templates/product/meta/family.html
+        pim/template/product/meta/family-variant:            pimenrich/templates/product/meta/family-variant.html
         pim/template/product/meta/change-family-modal:       pimenrich/templates/product/meta/change-family-modal.html
         pim/template/product/meta/groups:                    pimenrich/templates/product/meta/groups.html
         pim/template/product/meta/group-modal:               pimenrich/templates/product/meta/group-modal.html
