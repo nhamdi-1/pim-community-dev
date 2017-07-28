@@ -90,6 +90,7 @@ class ProductIndexer implements IndexerInterface, BulkIndexerInterface, RemoverI
         }
         $this->productClient->bulkIndexes($this->indexType, $normalizedObjects, 'id', Refresh::waitFor());
 
+        $normalizedObjects = [];
         foreach ($objects as $object) {
             $normalizedObject = $this->normalizer->normalize(
                 $object,

@@ -76,6 +76,8 @@ class Client
     }
 
     /**
+     * TODO: Remove to bulkIndex?
+     *
      * @param string       $indexType
      * @param array        $documents
      * @param string       $keyAsId

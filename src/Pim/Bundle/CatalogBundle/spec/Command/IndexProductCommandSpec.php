@@ -4,7 +4,7 @@ namespace spec\Pim\Bundle\CatalogBundle\Command;
 
 use PhpSpec\ObjectBehavior;
 use Pim\Bundle\CatalogBundle\Doctrine\ORM\Repository\ProductRepository;
-use Pim\Bundle\CatalogBundle\Elasticsearch\ProductIndexer;
+use Pim\Bundle\CatalogBundle\Elasticsearch\Indexer\ProductIndexer;
 use Prophecy\Argument;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Application;

@@ -10,23 +10,26 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\EventDispatcher\GenericEvent;
 
 /**
- * Index product models in the search engine.
+ * Index products in the search engine.
+ *
+ * This is not done directly in the product saver as it's only a technical
+ * problem. The product saver only handles business stuff.
  *
  * @author    Julien Janvier <julien.janvier@akeneo.com>
  * @copyright 2017 Akeneo SAS (http://www.akeneo.com)
  * @license   http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
-class IndexProductModelsSubscriber implements EventSubscriberInterface
+class IndexProductModelDescendantsSubscriber implements EventSubscriberInterface
 {
     /** @var ProductIndexer */
-    protected $productModelIndexer;
+    protected $productModelDescendantsIndexer;
 
     /**
      * @param  $productIndexer
      */
     public function __construct(ProductIndexer $productIndexer)
     {
-        $this->productModelIndexer = $productIndexer;
+        $this->productModelDescendantsIndexer = $productIndexer;
     }
 
     /**
@@ -35,18 +38,18 @@ class IndexProductModelsSubscriber implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            StorageEvents::POST_SAVE     => 'indexProductModel',
-            StorageEvents::POST_SAVE_ALL => 'bulkIndexProductModels',
-            StorageEvents::POST_REMOVE   => 'deleteProductModel',
+            StorageEvents::POST_SAVE     => 'indexProductModelDescendants',
+            StorageEvents::POST_SAVE_ALL => 'bulkIndexProductModelsDescendants',
+            // TODO: Delete ?
         ];
     }
 
     /**
-     * Index one product model.
+     * Index one product model descendants.
      *
      * @param GenericEvent $event
      */
-    public function indexProductModel(GenericEvent $event)
+    public function indexProductModelDescendants(GenericEvent $event)
     {
         $product = $event->getSubject();
         if (!$product instanceof ProductModelInterface) {
@@ -57,15 +60,15 @@ class IndexProductModelsSubscriber implements EventSubscriberInterface
             return;
         }
 
-        $this->productModelIndexer->index($product);
+        $this->productModelDescendantsIndexer->index($product);
     }
 
     /**
-     * Index several product models.
+     * Index several product models descendants.
      *
      * @param GenericEvent $event
      */
-    public function bulkIndexProductModels(GenericEvent $event)
+    public function bulkIndexProductModelsDescendants(GenericEvent $event)
     {
         $products = $event->getSubject();
         if (!is_array($products)) {
@@ -76,21 +79,6 @@ class IndexProductModelsSubscriber implements EventSubscriberInterface
             return;
         }
 
-        $this->productModelIndexer->indexAll($products);
-    }
-
-    /**
-     * Delete one product model from ES index
-     *
-     * @param RemoveEvent $event
-     */
-    public function deleteProductModel(RemoveEvent $event)
-    {
-        $product = $event->getSubject();
-        if (!$product instanceof ProductModelInterface) {
-            return;
-        }
-
-        $this->productModelIndexer->remove($product);
+        $this->productModelDescendantsIndexer->indexAll($products);
     }
 }

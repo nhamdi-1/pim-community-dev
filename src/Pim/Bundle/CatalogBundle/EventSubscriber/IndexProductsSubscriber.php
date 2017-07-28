@@ -39,7 +39,7 @@ class IndexProductsSubscriber implements EventSubscriberInterface
     {
         return [
             StorageEvents::POST_SAVE     => 'indexProduct',
-            StorageEvents::POST_SAVE_ALL => 'bulkIndexProduct',
+            StorageEvents::POST_SAVE_ALL => 'bulkIndexProducts',
             StorageEvents::POST_REMOVE   => 'deleteProduct',
         ];
     }
@@ -68,7 +68,7 @@ class IndexProductsSubscriber implements EventSubscriberInterface
      *
      * @param GenericEvent $event
      */
-    public function bulkIndexProduct(GenericEvent $event)
+    public function bulkIndexProducts(GenericEvent $event)
     {
         $products = $event->getSubject();
         if (!is_array($products)) {
@@ -94,6 +94,6 @@ class IndexProductsSubscriber implements EventSubscriberInterface
             return;
         }
 
-        $this->productIndexer->remove($product);
+        $this->productIndexer->remove($event->getSubjectId());
     }
 }

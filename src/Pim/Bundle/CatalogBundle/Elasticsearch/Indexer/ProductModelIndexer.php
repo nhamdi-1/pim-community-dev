@@ -3,10 +3,12 @@
 namespace Pim\Bundle\CatalogBundle\Elasticsearch\Indexer;
 
 use Akeneo\Bundle\ElasticsearchBundle\Client;
+use Akeneo\Bundle\ElasticsearchBundle\Refresh;
 use Akeneo\Component\StorageUtils\Indexer\BulkIndexerInterface;
 use Akeneo\Component\StorageUtils\Indexer\IndexerInterface;
 use Akeneo\Component\StorageUtils\Remover\BulkRemoverInterface;
 use Akeneo\Component\StorageUtils\Remover\RemoverInterface;
+use Pim\Component\Catalog\Normalizer\Indexing\ProductModelNormalizer;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
 /**
@@ -68,6 +70,8 @@ class ProductModelIndexer implements IndexerInterface, BulkIndexerInterface, Rem
             return;
         }
 
+        $normalizedObjects = [];
+
         foreach ($objects as $object) {
             $normalizedObject = $this->normalizer->normalize(
                 $object,
@@ -76,7 +80,13 @@ class ProductModelIndexer implements IndexerInterface, BulkIndexerInterface, Rem
             $this->validateObjectNormalization($normalizedObject);
             $normalizedObjects[] = $normalizedObject;
         }
-        $this->productAndProductModelClient->index($this->indexType, $normalizedObject['id'], $normalizedObject);
+
+        $this->productAndProductModelClient->bulkIndexes(
+            $this->indexType,
+            $normalizedObjects,
+            'id',
+            Refresh::waitFor()
+        );
     }
 
     /**
@@ -105,7 +115,9 @@ class ProductModelIndexer implements IndexerInterface, BulkIndexerInterface, Rem
     protected function validateObjectNormalization(array $normalization)
     {
         if (!isset($normalization['id'])) {
-            throw new \InvalidArgumentException('Only products with an "id" property can be indexed in the search engine.');
+            throw new \InvalidArgumentException(
+                'Only product models with an "id" property can be indexed in the search engine.'
+            );
         }
     }
 }
