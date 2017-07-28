@@ -140,6 +140,19 @@ class ProductController
     }
 
     /**
+     * Edit product
+     *
+     * @Template
+     * @AclAncestor("pim_enrich_product_index")
+     *
+     * @return array
+     */
+    public function editAction()
+    {
+        return [];
+    }
+
+    /**
      * Toggle product status (enabled/disabled)
      *
      * @param int $id
