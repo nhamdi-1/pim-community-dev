@@ -4,7 +4,7 @@ namespace Pim\Bundle\CatalogBundle\EventSubscriber;
 
 use Akeneo\Component\StorageUtils\Event\RemoveEvent;
 use Akeneo\Component\StorageUtils\StorageEvents;
-use Pim\Bundle\CatalogBundle\Elasticsearch\ObjectIndexer;
+use Pim\Bundle\CatalogBundle\Elasticsearch\ProductIndexer;
 use Pim\Component\Catalog\Model\ProductInterface;
 use Pim\Component\Catalog\Model\ProductModelInterface;
 use Symfony\Component\EventDispatcher\EventDispatcher;
@@ -61,7 +61,10 @@ class PlanProductModelChildrenIndexingSubscriber implements EventSubscriberInter
             return;
         }
 
-        $this->eventDispatcher->dispatch(StorageEvents::POST_SAVE_ALL, $productModel->getChildren());
+        // Recursively index product Models and products
+        foreach($productModel->getChildren() as $child) {
+
+        }
     }
 
     /**

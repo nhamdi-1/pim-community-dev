@@ -1,19 +1,44 @@
 parameters:
-    pim_catalog.elasticsearch.object_indexer.class: 'Pim\Bundle\CatalogBundle\Elasticsearch\ObjectIndexer'
+    pim_catalog.elasticsearch.product_indexer.class: 'Pim\Bundle\CatalogBundle\Elasticsearch\ProductIndexer'
 
 services:
-    pim_catalog.elasticsearch.product_indexer:
-        class: '%pim_catalog.elasticsearch.object_indexer.class%'
-        arguments:
-            - '@pim_serializer'
-            - '@akeneo_elasticsearch.client.product'
-            - 'pim_catalog_product'
-            - 'indexing_product'
+#    pim_catalog.elasticsearch.product_indexer:
+#        class: '%pim_catalog.elasticsearch.object_indexer.class%'
+#        arguments:
+#            - '@pim_serializer'
+#            - '@akeneo_elasticsearch.client.product'
+#            - 'pim_catalog_product'
+#            - 'indexing_product'
+#
+#    pim_catalog.elasticsearch.product_and_model_indexer:
+#        class: '%pim_catalog.elasticsearch.object_indexer.class%'
+#        arguments:
+#            - '@pim_serializer'
+#            - '@akeneo_elasticsearch.client.product_and_product_model'
+#            - 'pim_catalog_product'
+#            - 'indexing_product_and_model'
+#
+#    ----------------------------------------------------------
 
-    pim_catalog.elasticsearch.product_and_model_indexer:
+    pim_catalog.elasticsearch.product:
         class: '%pim_catalog.elasticsearch.object_indexer.class%'
         arguments:
             - '@pim_serializer'
-            - '@akeneo_elasticsearch.client.product_and_product_model'
-            - 'pim_catalog_product'
-            - 'indexing_product_and_model'
+            -
+              - '@akeneo_elasticsearch.client.product'
+              - '@akeneo_elasticsearch.client.product_and_product_model'
+
+    pim_catalog.elasticsearch.product_model:
+        class: '%pim_catalog.elasticsearch.object_indexer.class%'
+        arguments:
+            - '@pim_serializer'
+            -
+              - '@akeneo_elasticsearch.client.product_and_product_model'
+
+    pim_catalog.elasticsearch.product_model_descendance:
+        class: '%pim_catalog.elasticsearch.object_indexer.class%'
+        arguments:
+            - '@pim_serializer'
+            -
+              - '@akeneo_elasticsearch.client.product'
+              - '@akeneo_elasticsearch.client.product_and_product_model'

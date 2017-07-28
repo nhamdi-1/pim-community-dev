@@ -5,7 +5,7 @@ namespace Pim\Bundle\CatalogBundle\Doctrine\ORM;
 use Akeneo\Component\StorageUtils\Cursor\CursorInterface;
 use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityManagerInterface;
-use Pim\Bundle\CatalogBundle\Elasticsearch\ObjectIndexer;
+use Pim\Bundle\CatalogBundle\Elasticsearch\ProductIndexer;
 use Pim\Component\Catalog\Completeness\CompletenessRemoverInterface;
 use Pim\Component\Catalog\Model\ChannelInterface;
 use Pim\Component\Catalog\Model\CompletenessInterface;
@@ -34,7 +34,7 @@ class CompletenessRemover implements CompletenessRemoverInterface
     /** @var EntityManagerInterface */
     protected $entityManager;
 
-    /** @var ObjectIndexer */
+    /** @var ProductIndexer */
     protected $indexer;
 
     /** @var string */
@@ -43,13 +43,13 @@ class CompletenessRemover implements CompletenessRemoverInterface
     /**
      * @param ProductQueryBuilderFactoryInterface $pqbFactory
      * @param EntityManagerInterface              $entityManager
-     * @param ObjectIndexer                       $indexer
+     * @param ProductIndexer                      $indexer
      * @param string                              $completenessTable
      */
     public function __construct(
         ProductQueryBuilderFactoryInterface $pqbFactory,
         EntityManagerInterface $entityManager,
-        ObjectIndexer $indexer,
+        ProductIndexer $indexer,
         $completenessTable
     ) {
         $this->pqbFactory = $pqbFactory;

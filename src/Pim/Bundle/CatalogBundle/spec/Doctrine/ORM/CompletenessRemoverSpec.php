@@ -9,7 +9,7 @@ use Doctrine\DBAL\Driver\Statement;
 use Doctrine\ORM\EntityManagerInterface;
 use PhpSpec\ObjectBehavior;
 use Pim\Bundle\CatalogBundle\Doctrine\ORM\CompletenessRemover;
-use Pim\Bundle\CatalogBundle\Elasticsearch\ObjectIndexer;
+use Pim\Bundle\CatalogBundle\Elasticsearch\ProductIndexer;
 use Pim\Component\Catalog\Model\ChannelInterface;
 use Pim\Component\Catalog\Model\CompletenessInterface;
 use Pim\Component\Catalog\Model\FamilyInterface;
@@ -25,7 +25,7 @@ class CompletenessRemoverSpec extends ObjectBehavior
     function let(
         ProductQueryBuilderFactoryInterface $pqbFactory,
         EntityManagerInterface $entityManager,
-        ObjectIndexer $indexer,
+        ProductIndexer $indexer,
         Connection $connection
     ) {
         $this->beConstructedWith($pqbFactory, $entityManager, $indexer, 'pim_catalog_completeness');

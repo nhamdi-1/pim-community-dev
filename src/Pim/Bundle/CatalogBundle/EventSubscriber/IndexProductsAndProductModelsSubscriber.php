@@ -4,7 +4,7 @@ namespace Pim\Bundle\CatalogBundle\EventSubscriber;
 
 use Akeneo\Component\StorageUtils\Event\RemoveEvent;
 use Akeneo\Component\StorageUtils\StorageEvents;
-use Pim\Bundle\CatalogBundle\Elasticsearch\ObjectIndexer;
+use Pim\Bundle\CatalogBundle\Elasticsearch\ProductIndexer;
 use Pim\Component\Catalog\Model\ProductInterface;
 use Pim\Component\Catalog\Model\ProductModelInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -19,17 +19,19 @@ use Symfony\Component\EventDispatcher\GenericEvent;
  * Idea: Refactor the IndexProductOrProductModels and IndexProducts for IndexProductsAndProductModels which takes a list of
  * indexer
  *
+ * // TO refactor we need two classes
+ *
  * @author    Julien Janvier <j.janvier@gmail.com>
  * @copyright 2017 Akeneo SAS (http://www.akeneo.com)
  * @license   http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 class IndexProductsAndProductModelsSubscriber implements EventSubscriberInterface
 {
-    /** @var ObjectIndexer */
+    /** @var ProductIndexer */
     protected $indexers;
 
     /**
-     * @param ObjectIndexer $indexers
+     * @param ProductIndexer $indexers
      */
     public function __construct(array $indexers)
     {

@@ -117,7 +117,8 @@ services:
         tags:
             - { name: kernel.event_subscriber }
 
-    pim_catalog.event_subscriber.index_products_and_product_models:
+    # Index only products
+    pim_catalog.event_subscriber.index_products:
         class: '%pim_catalog.event_subscriber.index_products_and_product_models.class%'
         arguments:
             -
