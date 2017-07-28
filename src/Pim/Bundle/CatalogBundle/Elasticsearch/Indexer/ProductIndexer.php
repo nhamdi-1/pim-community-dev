@@ -1,6 +1,6 @@
 <?php
 
-namespace Pim\Bundle\CatalogBundle\Elasticsearch;
+namespace Pim\Bundle\CatalogBundle\Elasticsearch\Indexer;
 
 use Akeneo\Bundle\ElasticsearchBundle\Client;
 use Akeneo\Bundle\ElasticsearchBundle\Refresh;
@@ -117,10 +117,10 @@ class ProductIndexer implements IndexerInterface, BulkIndexerInterface, RemoverI
      *
      * {@inheritdoc}
      */
-    public function removeAll(array $objectIds, array $options = [])
+    public function removeAll(array $objects, array $options = [])
     {
-        $this->productClient->bulkDelete($this->indexType, $objectIds);
-        $this->productAndProductModelClient->bulkDelete($this->indexType, $objectIds);
+        $this->productClient->bulkDelete($this->indexType, $objects);
+        $this->productAndProductModelClient->bulkDelete($this->indexType, $objects);
     }
 
     /**
