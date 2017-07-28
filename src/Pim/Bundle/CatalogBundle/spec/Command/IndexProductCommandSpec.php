@@ -38,7 +38,7 @@ class IndexProductCommandSpec extends ObjectBehavior
         InputDefinition $definition
     ) {
         $container->get('pim_catalog.repository.product')->willReturn($productRepository);
-        $container->get('pim_catalog.elasticsearch.product_indexer')->willReturn($productIndexer);
+        $container->get('pim_catalog.elasticsearch.indexer.product')->willReturn($productIndexer);
 
         $productRepository->countAll()->willReturn(6);
         $productRepository->findAllWithOffsetAndSize(0, 5)->willReturn([]);

@@ -4,9 +4,8 @@ namespace Pim\Bundle\CatalogBundle\EventSubscriber;
 
 use Akeneo\Component\StorageUtils\Event\RemoveEvent;
 use Akeneo\Component\StorageUtils\StorageEvents;
-use Pim\Bundle\CatalogBundle\Elasticsearch\ProductIndexer;
+use Pim\Bundle\CatalogBundle\Elasticsearch\Indexer\ProductIndexer;
 use Pim\Component\Catalog\Model\ProductInterface;
-use Pim\Component\Catalog\Model\ProductModelInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\EventDispatcher\GenericEvent;
 
@@ -16,26 +15,21 @@ use Symfony\Component\EventDispatcher\GenericEvent;
  * This is not done directly in the product saver as it's only a technical
  * problem. The product saver only handles business stuff.
  *
- * Idea: Refactor the IndexProductOrProductModels and IndexProducts for IndexProductsAndProductModels which takes a list of
- * indexer
- *
- * // TO refactor we need two classes
- *
- * @author    Julien Janvier <j.janvier@gmail.com>
+ * @author    Julien Janvier <julien.janvier@akeneo.com>
  * @copyright 2017 Akeneo SAS (http://www.akeneo.com)
  * @license   http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
-class IndexProductsAndProductModelsSubscriber implements EventSubscriberInterface
+class IndexProductsSubscriber implements EventSubscriberInterface
 {
     /** @var ProductIndexer */
-    protected $indexers;
+    protected $productIndexer;
 
     /**
-     * @param ProductIndexer $indexers
+     * @param  $productIndexer
      */
-    public function __construct(array $indexers)
+    public function __construct(ProductIndexer $productIndexer)
     {
-        $this->indexers = $indexers;
+        $this->productIndexer = $productIndexer;
     }
 
     /**
@@ -44,9 +38,9 @@ class IndexProductsAndProductModelsSubscriber implements EventSubscriberInterfac
     public static function getSubscribedEvents()
     {
         return [
-            StorageEvents::POST_SAVE => 'indexProductOrProductModel',
-            StorageEvents::POST_SAVE_ALL => 'bulkIndexProductOrProductModels',
-            StorageEvents::POST_REMOVE => 'deleteProductOrProductModel',
+            StorageEvents::POST_SAVE     => 'indexProduct',
+            StorageEvents::POST_SAVE_ALL => 'bulkIndexProduct',
+            StorageEvents::POST_REMOVE   => 'deleteProduct',
         ];
     }
 
@@ -55,10 +49,10 @@ class IndexProductsAndProductModelsSubscriber implements EventSubscriberInterfac
      *
      * @param GenericEvent $event
      */
-    public function indexProductOrProductModel(GenericEvent $event)
+    public function indexProduct(GenericEvent $event)
     {
         $product = $event->getSubject();
-        if (!$product instanceof ProductModelInterface || !$product instanceof ProductInterface) {
+        if (!$product instanceof ProductInterface) {
             return;
         }
 
@@ -66,9 +60,7 @@ class IndexProductsAndProductModelsSubscriber implements EventSubscriberInterfac
             return;
         }
 
-        foreach ($this->indexers as $indexer) {
-            $indexer->index($product);
-        }
+        $this->productIndexer->index($product);
     }
 
     /**
@@ -76,20 +68,18 @@ class IndexProductsAndProductModelsSubscriber implements EventSubscriberInterfac
      *
      * @param GenericEvent $event
      */
-    public function bulkIndexProductOrProductModels(GenericEvent $event)
+    public function bulkIndexProduct(GenericEvent $event)
     {
         $products = $event->getSubject();
         if (!is_array($products)) {
             return;
         }
 
-        if (!current($products) instanceof ProductModelInterface) {
+        if (!current($products) instanceof ProductInterface) {
             return;
         }
 
-        foreach ($this->indexers as $indexer) {
-            $indexer->indexAll($products);
-        }
+        $this->productIndexer->indexAll($products);
     }
 
     /**
@@ -97,15 +87,13 @@ class IndexProductsAndProductModelsSubscriber implements EventSubscriberInterfac
      *
      * @param RemoveEvent $event
      */
-    public function deleteProductOrProductModel(RemoveEvent $event)
+    public function deleteProduct(RemoveEvent $event)
     {
         $product = $event->getSubject();
-        if (!$product instanceof ProductModelInterface) {
+        if (!$product instanceof ProductInterface) {
             return;
         }
 
-        foreach ($this->indexers as $indexer) {
-            $indexer->remove($product);
-        }
+        $this->productIndexer->remove($product);
     }
 }
