@@ -8,13 +8,13 @@ use Akeneo\Component\StorageUtils\Indexer\BulkIndexerInterface;
 use Akeneo\Component\StorageUtils\Indexer\IndexerInterface;
 use Akeneo\Component\StorageUtils\Remover\BulkRemoverInterface;
 use Akeneo\Component\StorageUtils\Remover\RemoverInterface;
-use Doctrine\Common\Util\ClassUtils;
-use Pim\Component\Catalog\Model\ProductInterface;
+use Pim\Component\Catalog\Normalizer\Indexing\ProductModelNormalizer;
+use Pim\Component\Catalog\Normalizer\Indexing\ProductNormalizer;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
 /**
  * Indexer responsible for the indexing of products entities. Each product should be normalized in the right format
- * prior to be indexed in Elasticsearch.
+ * prior to be indexed in the both product and product and product model indexes elasticsearch.
  *
  * @author    Julien Janvier <j.janvier@gmail.com>
  * @copyright 2017 Akeneo SAS (http://www.akeneo.com)
@@ -22,9 +22,6 @@ use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
  */
 class ProductIndexer implements IndexerInterface, BulkIndexerInterface, RemoverInterface, BulkRemoverInterface
 {
-    const INDEXING_FORMAT_PRODUCT_INDEX = 'indexing_product';
-    const INDEXING_FORMAT_PRODUCT_AND_MODEL_INDEX = 'indexing_product_and_model';
-
     /** @var NormalizerInterface */
     protected $normalizer;
 
@@ -62,11 +59,14 @@ class ProductIndexer implements IndexerInterface, BulkIndexerInterface, RemoverI
      */
     public function index($object, array $options = [])
     {
-        $normalizedObject = $this->normalizer->normalize($object, self::INDEXING_FORMAT_PRODUCT_INDEX);
+        $normalizedObject = $this->normalizer->normalize($object, ProductNormalizer::INDEXING_FORMAT_PRODUCT_INDEX);
         $this->validateObjectNormalization($normalizedObject);
         $this->productClient->index($this->indexType, $normalizedObject['id'], $normalizedObject);
 
-        $normalizedObject = $this->normalizer->normalize($object, self::INDEXING_FORMAT_PRODUCT_AND_MODEL_INDEX);
+        $normalizedObject = $this->normalizer->normalize(
+            $object,
+            ProductModelNormalizer::INDEXING_FORMAT_PRODUCT_AND_MODEL_INDEX
+        );
         $this->validateObjectNormalization($normalizedObject);
         $this->productAndProductModelClient->index($this->indexType, $normalizedObject['id'], $normalizedObject);
     }
@@ -84,18 +84,21 @@ class ProductIndexer implements IndexerInterface, BulkIndexerInterface, RemoverI
 
         $normalizedObjects = [];
         foreach ($objects as $object) {
-            $normalizedObject = $this->normalizer->normalize($object, self::INDEXING_FORMAT_PRODUCT_INDEX);
+            $normalizedObject = $this->normalizer->normalize($object, ProductNormalizer::INDEXING_FORMAT_PRODUCT_INDEX);
             $this->validateObjectNormalization($normalizedObject);
             $normalizedObjects[] = $normalizedObject;
         }
         $this->productClient->bulkIndexes($this->indexType, $normalizedObjects, 'id', Refresh::waitFor());
 
         foreach ($objects as $object) {
-            $normalizedObject = $this->normalizer->normalize($object, self::INDEXING_FORMAT_PRODUCT_AND_MODEL_INDEX);
+            $normalizedObject = $this->normalizer->normalize(
+                $object,
+                ProductModelNormalizer::INDEXING_FORMAT_PRODUCT_AND_MODEL_INDEX
+            );
             $this->validateObjectNormalization($normalizedObject);
             $normalizedObjects[] = $normalizedObject;
         }
-        $this->productClient->bulkIndexes($this->indexType, $normalizedObjects, 'id', Refresh::waitFor());
+        $this->productAndProductModelClient->bulkIndexes($this->indexType, $normalizedObjects, 'id', Refresh::waitFor());
     }
 
     /**
