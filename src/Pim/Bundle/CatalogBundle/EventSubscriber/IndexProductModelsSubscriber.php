@@ -5,6 +5,7 @@ namespace Pim\Bundle\CatalogBundle\EventSubscriber;
 use Akeneo\Component\StorageUtils\Event\RemoveEvent;
 use Akeneo\Component\StorageUtils\StorageEvents;
 use Pim\Bundle\CatalogBundle\Elasticsearch\Indexer\ProductIndexer;
+use Pim\Bundle\CatalogBundle\Elasticsearch\Indexer\ProductModelIndexer;
 use Pim\Component\Catalog\Model\ProductModelInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\EventDispatcher\GenericEvent;
@@ -18,15 +19,15 @@ use Symfony\Component\EventDispatcher\GenericEvent;
  */
 class IndexProductModelsSubscriber implements EventSubscriberInterface
 {
-    /** @var ProductIndexer */
+    /** @var ProductModelIndexer */
     protected $productModelIndexer;
 
     /**
-     * @param  $productIndexer
+     * @param ProductModelIndexer $productModelIndexer
      */
-    public function __construct(ProductIndexer $productIndexer)
+    public function __construct(ProductModelIndexer $productModelIndexer)
     {
-        $this->productModelIndexer = $productIndexer;
+        $this->productModelIndexer = $productModelIndexer;
     }
 
     /**
@@ -91,6 +92,6 @@ class IndexProductModelsSubscriber implements EventSubscriberInterface
             return;
         }
 
-        $this->productModelIndexer->remove($product);
+        $this->productModelIndexer->remove($event->getSubjectId());
     }
 }
