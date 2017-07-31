@@ -3,17 +3,16 @@
 namespace Pim\Bundle\CatalogBundle\EventSubscriber;
 
 use Akeneo\Component\StorageUtils\Event\RemoveEvent;
+use Akeneo\Component\StorageUtils\Indexer\BulkIndexerInterface;
+use Akeneo\Component\StorageUtils\Indexer\IndexerInterface;
+use Akeneo\Component\StorageUtils\Remover\RemoverInterface;
 use Akeneo\Component\StorageUtils\StorageEvents;
-use Pim\Bundle\CatalogBundle\Elasticsearch\Indexer\ProductIndexer;
 use Pim\Component\Catalog\Model\ProductModelInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\EventDispatcher\GenericEvent;
 
 /**
- * Index products in the search engine.
- *
- * This is not done directly in the product saver as it's only a technical
- * problem. The product saver only handles business stuff.
+ * Index product models descendance in the search engine.
  *
  * @author    Julien Janvier <julien.janvier@akeneo.com>
  * @copyright 2017 Akeneo SAS (http://www.akeneo.com)
@@ -21,15 +20,28 @@ use Symfony\Component\EventDispatcher\GenericEvent;
  */
 class IndexProductModelDescendantsSubscriber implements EventSubscriberInterface
 {
-    /** @var ProductIndexer */
+    /** @var IndexerInterface */
     protected $productModelDescendantsIndexer;
 
+    /** @var BulkIndexerInterface */
+    protected $productModelDescendantsBulkIndexer;
+
+    /** @var RemoverInterface */
+    protected $productModelDescendantsRemover;
+
     /**
-     * @param  $productIndexer
+     * @param IndexerInterface     $productIndexer
+     * @param BulkIndexerInterface $ProductModelbulkIndexer
+     * @param RemoverInterface     $productModelRemover
      */
-    public function __construct(ProductIndexer $productIndexer)
-    {
+    public function __construct(
+        IndexerInterface $productIndexer,
+        BulkIndexerInterface $ProductModelbulkIndexer,
+        RemoverInterface $productModelRemover
+    ) {
         $this->productModelDescendantsIndexer = $productIndexer;
+        $this->productModelDescendantsBulkIndexer = $ProductModelbulkIndexer;
+        $this->productModelDescendantsRemover = $productModelRemover;
     }
 
     /**
@@ -40,7 +52,7 @@ class IndexProductModelDescendantsSubscriber implements EventSubscriberInterface
         return [
             StorageEvents::POST_SAVE     => 'indexProductModelDescendants',
             StorageEvents::POST_SAVE_ALL => 'bulkIndexProductModelsDescendants',
-            // TODO: Delete ?
+            StorageEvents::POST_REMOVE   => 'deleteProductModel',
         ];
     }
 
@@ -79,6 +91,20 @@ class IndexProductModelDescendantsSubscriber implements EventSubscriberInterface
             return;
         }
 
-        $this->productModelDescendantsIndexer->indexAll($products);
+        $this->productModelDescendantsBulkIndexer->indexAll($products);
+    }
+
+    public function deleteProductModel(RemoveEvent $event)
+    {
+        $product = $event->getSubject();
+        if (!$product instanceof ProductModelInterface) {
+            return;
+        }
+
+        if (!$event->hasArgument('unitary') || false === $event->getArgument('unitary')) {
+            return;
+        }
+
+        $this->productModelDescendantsRemover->remove($product);
     }
 }
